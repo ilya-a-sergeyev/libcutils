@@ -247,18 +247,16 @@ size_t strlcpy(char *dst, const char *src, size_t siz)
 	return (s - src - 1);
 }
 
-/*
-void * operator new(size_t n)
+int property_get(const char *key, char *value, const char *default_value)
 {
-    void * const p = malloc(n);
-    return p;
+    int len;
+    //len = __system_property_get(key, value);
+    //if(len > 0) {
+    //    return len;
+    //}
+    if(default_value) {
+        len = strlen(default_value);
+        memcpy(value, default_value, len + 1);
+    }
+    return len;
 }
-
-void operator delete(void *p)
-{
-    free(p);
-}
-
-int __errno;
-int __sF;
-*/
