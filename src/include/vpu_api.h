@@ -1,60 +1,55 @@
-#ifndef _VPU_API_H_
-#define _VPU_API_H_
-
+#ifndef VPU_API_H_
+#define VPU_API_H_
 #include "vpu_global.h"
 
-
-#define VPU_API_NOPTS_VALUE          (0x8000000000000000LL)
-
-typedef struct VideoPacket {
-    RK_S64 pts;                /* with unit of us*/
-    RK_S64 dts;                /* with unit of us*/
-    RK_U8 *data;
-    RK_S32 size;
-    RK_U32 capability;
-    RK_U32 nFlags;
-}VideoPacket_t;
-
-typedef struct DecoderOut {
-    RK_U8 *data;
-    RK_U32 size;
-    RK_S64 timeUs;
-    RK_U32 nFlags;
-}DecoderOut_t;
-
-typedef struct EncInputStream {
-    RK_U8 *buf;
-    RK_S32 size;
-    RK_U32 bufPhyAddr;
-    RK_S64 timeUs;
-    RK_U32 nFlags;
-}EncInputStream_t;
-
-typedef struct EncoderOut {
-    RK_U8 *data;
-    RK_S32 size;
-    RK_S64 timeUs;
-    RK_S32 keyFrame;
-
-}EncoderOut_t;
+typedef struct
+{
+   int width;
+   int height;
+   int rc_mode;
+   int bitRate;
+   int framerate;
+   int	qp;
+   int	enableCabac;
+   int	cabacInitIdc;
+   int format;
+   int  intraPicRate;
+   int	reserved[6];
+}EncParams1;
 
 typedef enum
 {
-    VPU_H264ENC_YUV420_PLANAR = 0,  /* YYYY... UUUU... VVVV */
-    VPU_H264ENC_YUV420_SEMIPLANAR = 1,  /* YYYY... UVUVUV...    */
-    VPU_H264ENC_YUV422_INTERLEAVED_YUYV = 2,    /* YUYVYUYV...          */
-    VPU_H264ENC_YUV422_INTERLEAVED_UYVY = 3,    /* UYVYUYVY...          */
-    VPU_H264ENC_RGB565 = 4, /* 16-bit RGB           */
-    VPU_H264ENC_BGR565 = 5, /* 16-bit RGB           */
-    VPU_H264ENC_RGB555 = 6, /* 15-bit RGB           */
-    VPU_H264ENC_BGR555 = 7, /* 15-bit RGB           */
-    VPU_H264ENC_RGB444 = 8, /* 12-bit RGB           */
-    VPU_H264ENC_BGR444 = 9, /* 12-bit RGB           */
-    VPU_H264ENC_RGB888 = 10,    /* 24-bit RGB           */
-    VPU_H264ENC_BGR888 = 11,    /* 24-bit RGB           */
-    VPU_H264ENC_RGB101010 = 12, /* 30-bit RGB           */
-    VPU_H264ENC_BGR101010 = 13  /* 30-bit RGB           */
+    H264ENC_YUV420_PLANAR = 0,  /* YYYY... UUUU... VVVV */
+    H264ENC_YUV420_SEMIPLANAR = 1,  /* YYYY... UVUVUV...    */
+    H264ENC_YUV422_INTERLEAVED_YUYV = 2,    /* YUYVYUYV...          */
+    H264ENC_YUV422_INTERLEAVED_UYVY = 3,    /* UYVYUYVY...          */
+    H264ENC_RGB565 = 4, /* 16-bit RGB           */
+    H264ENC_BGR565 = 5, /* 16-bit RGB           */
+    H264ENC_RGB555 = 6, /* 15-bit RGB           */
+    H264ENC_BGR555 = 7, /* 15-bit RGB           */
+    H264ENC_RGB444 = 8, /* 12-bit RGB           */
+    H264ENC_BGR444 = 9, /* 12-bit RGB           */
+    H264ENC_RGB888 = 10,    /* 24-bit RGB           */
+    H264ENC_BGR888 = 11,    /* 24-bit RGB           */
+    H264ENC_RGB101010 = 12, /* 30-bit RGB           */
+    H264ENC_BGR101010 = 13  /* 30-bit RGB           */
 } H264EncPictureType;
+
+/*typedef enum {
+    ON2_CODINT_TYPE_UNKNOW = -1,
+    ON2_CODINT_TYPE_M2V,
+    ON2_CODINT_TYPE_H263,
+    ON2_CODINT_TYPE_M4V,
+    ON2_CODINT_TYPE_RV,
+    ON2_CODINT_TYPE_VC1,
+    ON2_CODINT_TYPE_VP6,
+    ON2_CODINT_TYPE_VP8,
+    ON2_CODINT_TYPE_AVC,
+    ON2_CODINT_TYPE_AVC_FLASH,
+    ON2_CODINT_TYPE_JPEG,
+
+    ON2_CODINT_TYPE_AVC_ENC = 0x100,
+} On2CodingType;*/
 
 /**
  * Enumeration used to define the possible video compression codings.
@@ -65,6 +60,7 @@ typedef enum
  *        not differentiate between MPEG-4 and H.264 bit streams, it is
  *        up to the codec to handle this.
  */
+
 //sync with the omx_video.h
 typedef enum OMX_ON2_VIDEO_CODINGTYPE {
     OMX_ON2_VIDEO_CodingUnused,     /**< Value when coding is N/A */
@@ -72,164 +68,139 @@ typedef enum OMX_ON2_VIDEO_CODINGTYPE {
     OMX_ON2_VIDEO_CodingMPEG2,      /**< AKA: H.262 */
     OMX_ON2_VIDEO_CodingH263,       /**< H.263 */
     OMX_ON2_VIDEO_CodingMPEG4,      /**< MPEG-4 */
-    OMX_ON2_VIDEO_CodingWMV,        /**< Windows Media Video (WMV1,WMV2,WMV3)*/
+    OMX_ON2_VIDEO_CodingWMV,        /**< all versions of Windows Media Video */
     OMX_ON2_VIDEO_CodingRV,         /**< all versions of Real Video */
     OMX_ON2_VIDEO_CodingAVC,        /**< H.264/AVC */
     OMX_ON2_VIDEO_CodingMJPEG,      /**< Motion JPEG */
-    OMX_ON2_VIDEO_CodingVP8,                     /**< VP8 */
-    OMX_ON2_VIDEO_CodingVP9,                     /**< VP9 */
-    OMX_ON2_VIDEO_CodingVC1 = 0x01000000, /**< Windows Media Video (WMV1,WMV2,WMV3)*/
-    OMX_ON2_VIDEO_CodingFLV1,       /**< Sorenson H.263 */
+    OMX_ON2_VIDEO_CodingFLV1 = 0x01000000,       /**< Sorenson H.263 */
     OMX_ON2_VIDEO_CodingDIVX3,                   /**< DIVX3 */
+    OMX_ON2_VIDEO_CodingVPX,                     /**< VP8 */
     OMX_ON2_VIDEO_CodingVP6,
+    OMX_ON2_VIDEO_EncodingAVC = 0x0200000,
     OMX_ON2_VIDEO_CodingKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */
     OMX_ON2_VIDEO_CodingVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
     OMX_ON2_VIDEO_CodingMax = 0x7FFFFFFF
 } OMX_ON2_VIDEO_CODINGTYPE;
 
-typedef enum CODEC_TYPE {
-    CODEC_NONE,
-    CODEC_DECODER,
-    CODEC_ENCODER,
-    CODEC_BUTT,
-}CODEC_TYPE;
-
-typedef enum VPU_API_ERR{
-    VPU_API_OK = 0,
-    VPU_API_ERR_UNKNOW = -1,
-    VPU_API_ERR_BASE = -1000,
-    VPU_API_ERR_LIST_STREAM         =     VPU_API_ERR_BASE -1,
-    VPU_API_ERR_INIT                =     VPU_API_ERR_BASE -2,
-    VPU_API_ERR_ON2_CODEC_INIT      =     VPU_API_ERR_BASE -3,
-    VPU_API_ERR_STREAM              =     VPU_API_ERR_BASE -4,
-    VPU_API_ERR_FATAL_THREAD        =     VPU_API_ERR_BASE -5,
-
-    VPU_API_ERR_BUTT,
-}VPU_API_ERR;
-
-typedef struct EncParameter
-{
-   int width;
-   int height;
-   int rc_mode;
-   int bitRate;
-   int framerate;
-   int  qp;
-   int  enableCabac;
-   int  cabacInitIdc;
-   int  format;
-   int	intraPicRate;
-   int  framerateout;
-   int  profileIdc;
-   int  levelIdc;
-   int	reserved[3];
-}EncParameter_t;
-
-typedef enum VPU_API_CMD
-{
-   VPU_API_ENC_SETCFG,
-   VPU_API_ENC_GETCFG,
-   VPU_API_ENC_SETFORMAT,
-   VPU_API_ENC_SETIDRFRAME,
-}VPU_API_CMD;
-typedef struct EXtraCfg {
-    RK_S32 vc1extra_size;
-    RK_S32 vp6codeid;
-    RK_S32 tsformat;
-    RK_U32 reserved[20];
-}EXtraCfg_t;
-/**
- * @addtogroup rk_vpu_codec
- * @{
- */
-typedef struct VpuCodecContext {
-    void* vpuApiObj;
-
-    CODEC_TYPE codecType;
-    OMX_ON2_VIDEO_CODINGTYPE videoCoding;
-
-    RK_U32 width;
-    RK_U32 height;
-    RK_U8 *extradata;
-    RK_S32 extradata_size;
-
-    RK_U8  enableparsing;
 
 
+extern void*         get_class_On2AvcDecoder(void);
+extern int          init_class_On2AvcDecoder(void * AvcDecoder,int tsFlag);
+extern void      destroy_class_On2AvcDecoder(void * AvcDecoder);
+extern int        deinit_class_On2AvcDecoder(void * AvcDecoder);
+extern int  dec_oneframe_class_On2AvcDecoder(void * AvcDecoder, unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize,long long *InputTimestamp);
+extern void reset_class_On2AvcDecoder(void * AvcDecoder);
 
-    RK_S32 no_thread;
-    EXtraCfg_t extra_cfg;
+extern void*         get_class_On2M4vDecoder(void);
+extern void      destroy_class_On2M4vDecoder(void * M4vDecoder);
+extern int          init_class_On2M4vDecoder(void * M4vDecoder, VPU_GENERIC *vpug);
+extern int        deinit_class_On2M4vDecoder(void * M4vDecoder);
+extern int         reset_class_On2M4vDecoder(void * M4vDecoder);
+extern int  dec_oneframe_class_On2M4vDecoder(void * M4vDecoder,unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
 
-    void* private_data;
+extern void*        get_class_On2H263Decoder(void);
+extern void     destroy_class_On2H263Decoder(void * H263Decoder);
+extern int         init_class_On2H263Decoder(void * H263Decoder, VPU_GENERIC *vpug);
+extern int       deinit_class_On2H263Decoder(void * H263Decoder);
+extern int        reset_class_On2H263Decoder(void * H263Decoder);
+extern int dec_oneframe_class_On2H263Decoder(void * H263Decoder,unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
 
-    /*
-     ** 1: error state(not working)  0: working
-    */
-    RK_S32 decoder_err;
+extern void*         get_class_On2M2vDecoder(void);
+extern void      destroy_class_On2M2vDecoder(void * M2vDecoder);
+extern int          init_class_On2M2vDecoder(void * M2vDecoder);
+extern int        deinit_class_On2M2vDecoder(void * M2vDecoder);
+extern int         reset_class_On2M2vDecoder(void * M2vDecoder);
+extern int  dec_oneframe_class_On2M2vDecoder(void * M2vDecoder,unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
+extern int  get_oneframe_class_On2M2vDecoder(void * M2vDecoder, unsigned char* aOutBuffer, unsigned int* aOutputLength);
 
+extern void*          get_class_On2RvDecoder(void);
+extern void       destroy_class_On2RvDecoder(void * RvDecoder);
+extern int           init_class_On2RvDecoder(void * RvDecoder);
+extern int         deinit_class_On2RvDecoder(void * RvDecoder);
+extern int          reset_class_On2RvDecoder(void * RvDecoder);
+extern int   dec_oneframe_class_On2RvDecoder(void * RvDecoder,unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
+extern void         get_width_Height_class_On2RvDecoder(void * RvDecoder, unsigned int* widht, unsigned int* height);
 
-    /**
-     * Allocate and initialize an VpuCodecContext.
-     *
-     * @param ctx The context of vpu api, allocated in this function.
-     * @param extraData The extra data of codec, some codecs need / can
-     *        use extradata like Huffman tables, also live VC1 codec can
-     *        use extradata to initialize itself.
-     * @param extra_size The size of extra data.
-     *
-     * @return 0 for init success, others for failure.
-     * note: check whether ctx has been allocated success after you do init.
-     */
-    RK_S32 (*init)(struct VpuCodecContext *ctx, RK_U8 *extraData, RK_U32 extra_size);
+extern void*         get_class_On2Vp8Decoder(void);
+extern void      destroy_class_On2Vp8Decoder(void * Vp8Decoder);
+extern int          init_class_On2Vp8Decoder(void * Vp8Decoder);
+extern int        deinit_class_On2Vp8Decoder(void * Vp8Decoder);
+extern int         reset_class_On2Vp8Decoder(void * Vp8Decoder);
+extern int  dec_oneframe_class_On2Vp8Decoder(void * Vp8Decoder,unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
 
-    /**
-     * @return 0 for decode success, others for failure.
-     */
-    RK_S32 (*decode)(struct VpuCodecContext *ctx, VideoPacket_t *pkt, DecoderOut_t *aDecOut);
+extern void*         get_class_On2Vc1Decoder(void);
+extern void      destroy_class_On2Vc1Decoder(void * Vc1Decoder);
+extern int          init_class_On2Vc1Decoder(void * Vc1Decoder, unsigned char *tmpStrm, unsigned int size,unsigned int extraDataSize);
+extern int        deinit_class_On2Vc1Decoder(void * Vc1Decoder);
+extern int         reset_class_On2Vc1Decoder(void * Vc1Decoder);
+extern int  dec_oneframe_class_On2Vc1Decoder(void * Vc1Decoder, unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize, long long aTimeStamp);
 
-    /**
-     * @return 0 for encode success, others for failure.
-     */
-    RK_S32 (*encode)(struct VpuCodecContext *ctx, EncInputStream_t *aEncInStrm, EncoderOut_t *aEncOut);
+extern void*         get_class_On2Vp6Decoder(void);
+extern void      destroy_class_On2Vp6Decoder(void * Vp6Decoder);
+extern int          init_class_On2Vp6Decoder(void * Vp6Decoder, int codecid);
+extern int        deinit_class_On2Vp6Decoder(void * Vp6Decoder);
+extern int         reset_class_On2Vp6Decoder(void * Vp6Decoder);
+extern int  dec_oneframe_class_On2Vp6Decoder(void * Vp6Decoder, unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
 
-    /**
-     * flush codec while do fast forward playing.
-     *
-     * @return 0 for flush success, others for failure.
-     */
-    RK_S32 (*flush)(struct VpuCodecContext *ctx);
-    RK_S32 (*control)(struct VpuCodecContext *ctx, VPU_API_CMD cmdType, void* param);
-    /**
-     *seperate the decode function to two function
-     *
-    */
-    RK_S32 (*decode_sendstream)(struct VpuCodecContext *ctx, VideoPacket_t *pkt);
-    RK_S32 (*decode_getframe)(struct VpuCodecContext *ctx, DecoderOut_t *aDecOut);
+extern void*         get_class_On2JpegDecoder(void);
+extern void      destroy_class_On2JpegDecoder(void * JpegDecoder);
+extern int          init_class_On2JpegDecoder(void * JpegDecoder);
+extern int        deinit_class_On2JpegDecoder(void * JpegDecoder);
+extern int         reset_class_On2JpegDecoder(void * JpegDecoder);
+extern int  dec_oneframe_class_On2JpegDecoder(void * JpegDecoder, unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
 
-    RK_S32 (*encoder_sendframe)(struct VpuCodecContext *ctx,  EncInputStream_t *aEncInStrm);
-    RK_S32 (*encoder_getstream)(struct VpuCodecContext *ctx, EncoderOut_t *aEncOut);
-}VpuCodecContext_t;
+extern void* get_class_On2AvcEncoder(void);
+extern void  destroy_class_On2AvcEncoder(void * AvcEncoder);
+extern int init_class_On2AvcEncoder(void * AvcEncoder, EncParams1 *aEncOption, unsigned char* aOutBuffer,unsigned long * aOutputLength);
+extern int deinit_class_On2AvcEncoder(void * AvcEncoder);
+extern int enc_oneframe_class_On2AvcEncoder(void * AvcEncoder, unsigned char* aOutBuffer, unsigned int * aOutputLength,unsigned char* aInputBuf,unsigned int  aInBuffPhy,unsigned int *aInBufSize,unsigned int * aOutTimeStamp, int* aSyncFlag);
+extern void enc_getconfig_class_On2AvcEncoder(void * AvcEncoder,EncParams1* vpug);
+extern void enc_setconfig_class_On2AvcEncoder(void * AvcEncoder,EncParams1* vpug);
+extern int enc_setInputFormat_class_On2AvcEncoder(void * AvcEncoder,H264EncPictureType inputFormat);
+extern void enc_SetintraPeriodCnt_class_On2AvcEncoder(void * AvcEncoder);
+extern void enc_SetInputAddr_class_On2AvcEncoder(void * AvcEncoder,unsigned long input);
 
-/* allocated vpu codec context */
+extern void *  get_class_On2Vp8Encoder(void);
+extern void  destroy_class_On2Vp8Encoder(void * Vp8Encoder);
+extern int init_class_On2Vp8Encoder(void * Vp8Encoder, EncParams1 *aEncOption, unsigned char* aOutBuffer,unsigned int* aOutputLength);
+extern int deinit_class_On2Vp8Encoder(void * Vp8Encoder);
+extern int enc_oneframe_class_On2Vp8Encoder(void * Vp8Encoder, unsigned char* aOutBuffer, unsigned int* aOutputLength,
+                                     unsigned char *aInBuffer,unsigned int aInBuffPhy,unsigned int* aInBufSize,unsigned int* aOutTimeStamp, int *aSyncFlag);
+
+typedef struct tag_VPU_API {
+    void* (*         get_class_On2Decoder)(void);
+    void  (*     destroy_class_On2Decoder)(void *decoder);
+    int   (*      deinit_class_On2Decoder)(void *decoder);
+    int   (*        init_class_On2Decoder)(void *decoder);
+    int   (*        init_class_On2Decoder_M4VH263)(void *decoder, VPU_GENERIC *vpug);
+    int   (*        init_class_On2Decoder_VC1)(void *decoder, unsigned char *tmpStrm, unsigned int size,unsigned int extraDataSize);
+    int   (*        init_class_On2Decoder_VP6)(void *decoder, int codecid);
+	int   (*        init_class_On2Decoder_AVC)(void *decoder,int tsFlag);
+    int   (*       reset_class_On2Decoder)(void *decoder);
+    int   (*dec_oneframe_class_On2Decoder)(void *decoder, unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
+    int   (*dec_oneframe_class_On2Decoder_WithTimeStamp)(void *decoder, unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize, long long *InputTimestamp);
+    int   (*get_oneframe_class_On2Decoder)(void *decoder, unsigned char* aOutBuffer, unsigned int* aOutputLength);
+    void  (*get_width_Height_class_On2Decoder_RV)(void *decoder, unsigned int* width, unsigned int* height);
+
+	void* (*         get_class_On2Encoder)(void);
+    void  (*     destroy_class_On2Encoder)(void *encoder);
+    int   (*      deinit_class_On2Encoder)(void *encoder);
+    int   (*        init_class_On2Encoder)(void *encoder,EncParams1 *aEncOption, unsigned char * aOutBuffer,unsigned int* aOutputLength);
+    int   (*enc_oneframe_class_On2Encoder)(void * ncoder, unsigned char* aOutBuffer, unsigned int * aOutputLength,unsigned char* aInputBuf,unsigned int  aInBuffPhy,unsigned int *aInBufSize,unsigned int * aOutTimeStamp, int* aSyncFlag);
+    void  (*enc_getconfig_class_On2Encoder)(void * AvcEncoder,EncParams1* vpug);
+    void  (*enc_setconfig_class_On2Encoder)(void * AvcEncoder,EncParams1* vpug);
+    int   (*enc_setInputFormat_class_On2Encoder)(void * AvcEncoder,H264EncPictureType inputFormat);
+    void  (*enc_SetintraPeriodCnt_class_On2Encoder)(void * AvcEncoder);
+    void  (*enc_SetInputAddr_class_On2Encoder)(void * AvcEncoder,unsigned long input);
+} VPU_API;
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-RK_S32 vpu_open_context(struct VpuCodecContext **ctx);
+ void vpu_api_init(VPU_API *vpu_api, OMX_ON2_VIDEO_CODINGTYPE video_coding_type);
 #ifdef __cplusplus
 }
 #endif
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-RK_S32 vpu_close_context(struct VpuCodecContext **ctx);
-#ifdef __cplusplus
-}
-#endif
-
-typedef RK_S32 (*VpuOpenContextFactoryFun)(struct VpuCodecContext **ctx);
-typedef RK_S32 (*VpuCloseContextFactoryFun)(struct VpuCodecContext **ctx);
 #endif
 

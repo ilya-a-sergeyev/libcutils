@@ -1,9 +1,11 @@
 
+
 #ifndef __VPU_MEM_H__
 #define __VPU_MEM_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "vpu_type.h"
