@@ -83,6 +83,9 @@ typedef enum OMX_ON2_VIDEO_CODINGTYPE {
 } OMX_ON2_VIDEO_CODINGTYPE;
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern void*         get_class_On2AvcDecoder(void);
 extern int          init_class_On2AvcDecoder(void * AvcDecoder,int tsFlag);
@@ -167,6 +170,10 @@ extern int deinit_class_On2Vp8Encoder(void * Vp8Encoder);
 extern int enc_oneframe_class_On2Vp8Encoder(void * Vp8Encoder, unsigned char* aOutBuffer, unsigned int* aOutputLength,
                                      unsigned char *aInBuffer,unsigned int aInBuffPhy,unsigned int* aInBufSize,unsigned int* aOutTimeStamp, int *aSyncFlag);
 
+#ifdef __cplusplus
+}
+#endif
+
 typedef struct tag_VPU_API {
     void* (*         get_class_On2Decoder)(void);
     void  (*     destroy_class_On2Decoder)(void *decoder);
@@ -175,14 +182,14 @@ typedef struct tag_VPU_API {
     int   (*        init_class_On2Decoder_M4VH263)(void *decoder, VPU_GENERIC *vpug);
     int   (*        init_class_On2Decoder_VC1)(void *decoder, unsigned char *tmpStrm, unsigned int size,unsigned int extraDataSize);
     int   (*        init_class_On2Decoder_VP6)(void *decoder, int codecid);
-	int   (*        init_class_On2Decoder_AVC)(void *decoder,int tsFlag);
+    int   (*        init_class_On2Decoder_AVC)(void *decoder,int tsFlag);
     int   (*       reset_class_On2Decoder)(void *decoder);
     int   (*dec_oneframe_class_On2Decoder)(void *decoder, unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize);
     int   (*dec_oneframe_class_On2Decoder_WithTimeStamp)(void *decoder, unsigned char* aOutBuffer, unsigned int *aOutputLength, unsigned char* aInputBuf, unsigned int* aInBufSize, long long *InputTimestamp);
     int   (*get_oneframe_class_On2Decoder)(void *decoder, unsigned char* aOutBuffer, unsigned int* aOutputLength);
     void  (*get_width_Height_class_On2Decoder_RV)(void *decoder, unsigned int* width, unsigned int* height);
 
-	void* (*         get_class_On2Encoder)(void);
+    void* (*         get_class_On2Encoder)(void);
     void  (*     destroy_class_On2Encoder)(void *encoder);
     int   (*      deinit_class_On2Encoder)(void *encoder);
     int   (*        init_class_On2Encoder)(void *encoder,EncParams1 *aEncOption, unsigned char * aOutBuffer,unsigned int* aOutputLength);
@@ -193,6 +200,7 @@ typedef struct tag_VPU_API {
     void  (*enc_SetintraPeriodCnt_class_On2Encoder)(void * AvcEncoder);
     void  (*enc_SetInputAddr_class_On2Encoder)(void * AvcEncoder,unsigned long input);
 } VPU_API;
+
 #ifdef __cplusplus
 extern "C"
 {

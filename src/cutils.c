@@ -55,7 +55,7 @@ static int ion_ioctl(int fd, int req, void *arg)
 }
 
 /* Documented in header file. */
-int socket_make_sockaddr_un(const char *name, int namespaceId, 
+int socket_make_sockaddr_un(const char *name, int namespaceId,
         struct sockaddr_un *p_addr, socklen_t *alen)
 {
     memset (p_addr, 0, sizeof (*p_addr));
@@ -75,7 +75,7 @@ int socket_make_sockaddr_un(const char *name, int namespaceId,
              * Note: The path in this case is *not* supposed to be
              * '\0'-terminated. ("man 7 unix" for the gory details.)
              */
-            
+
             p_addr->sun_path[0] = 0;
             memcpy(p_addr->sun_path + 1, name, namelen);
 #else /*HAVE_LINUX_LOCAL_SOCKET_NAMESPACE*/
@@ -95,7 +95,7 @@ int socket_make_sockaddr_un(const char *name, int namespaceId,
         case ANDROID_SOCKET_NAMESPACE_RESERVED:
             namelen = strlen(name) + strlen(ANDROID_RESERVED_SOCKET_PREFIX);
             /* unix_path_max appears to be missing on linux */
-            if (namelen > sizeof(*p_addr) 
+            if (namelen > sizeof(*p_addr)
                     - offsetof(struct sockaddr_un, sun_path) - 1) {
                 goto error;
             }
@@ -107,7 +107,7 @@ int socket_make_sockaddr_un(const char *name, int namespaceId,
         case ANDROID_SOCKET_NAMESPACE_FILESYSTEM:
             namelen = strlen(name);
             /* unix_path_max appears to be missing on linux */
-            if (namelen > sizeof(*p_addr) 
+            if (namelen > sizeof(*p_addr)
                     - offsetof(struct sockaddr_un, sun_path) - 1) {
                 goto error;
             }
@@ -129,10 +129,10 @@ error:
  * connect to peer named "name" on fd
  * returns same fd or -1 on error.
  * fd is not closed on error. that's your job.
- * 
+ *
  * Used by AndroidSocketImpl
  */
-int socket_local_client_connect(int fd, const char *name, int namespaceId, 
+int socket_local_client_connect(int fd, const char *name, int namespaceId,
         int type)
 {
     struct sockaddr_un addr;
@@ -156,7 +156,7 @@ error:
     return -1;
 }
 
-/** 
+/**
  * connect to peer named "name"
  * returns fd or -1 on error
  */
@@ -260,3 +260,5 @@ int property_get(const char *key, char *value, const char *default_value)
     }
     return len;
 }
+
+FILE __sF[3];
